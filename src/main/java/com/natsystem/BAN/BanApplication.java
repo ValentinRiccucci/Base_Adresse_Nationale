@@ -14,21 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class BanApplication {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(BanApplication.class, args);
 		System.out.println("BAN Application Started");
 
 	}
-	// Pour lancer le job au démarrage (mode démo) :
-//	@Bean
-//	public CommandLineRunner run(JobLauncher launcher, Job helloWorldJob) {
-//		return args -> {
-//			JobParameters params = new JobParametersBuilder()
-//					.addLong("startAt", System.currentTimeMillis())
-//					.toJobParameters();
-//			launcher.run(helloWorldJob, params);
-//		};
-//	}
+
 	@Bean
 	public CommandLineRunner run(JobLauncher launcher, Job importFranceJob) {
 		return args -> {

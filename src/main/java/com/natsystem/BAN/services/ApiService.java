@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 public class ApiService {
@@ -26,13 +28,22 @@ public class ApiService {
                 .map(FranceDTO::from);
     }
 
+    @Transactional(readOnly = true)
     public Page<FranceDTO> rechercheVoie(Pageable pageable, String voie) {
         return franceRepository.findByNom_voieIgnoreCase(pageable,voie)
                 .map(FranceDTO::from);
     }
 
+    @Transactional(readOnly = true)
     public Page<FranceDTO> rechercheCommune(Pageable pageable, String commune) {
         return franceRepository.findByNom_communeIgnoreCase(pageable,commune)
                 .map(FranceDTO::from);
     }
+
+    @Transactional(readOnly = true)
+    public int deleteAllByIdNotIn(ArrayList<String> ids) {
+        return franceRepository.deleteAllByIdNotIn(ids);
+    }
+
+
 }

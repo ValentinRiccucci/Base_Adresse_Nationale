@@ -4,8 +4,6 @@ import com.natsystem.BAN.dto.FranceDTO;
 import com.natsystem.BAN.model.France;
 import com.natsystem.BAN.repository.FranceRepository;
 import io.micrometer.core.instrument.MeterRegistry;
-
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -60,6 +58,7 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
         }
         //On regarde si la ligne était déja dans la table mais qu'elle est différente et pas déja traité
         else if (databaseItem != null && !isDuplicate(item, Optional.of(databaseItem)) ) {
+            meterRegistry.counter("ban.france.duplicates").increment();
             log.info("Ancienne ligne : {}", databaseItem.toString());
             log.info("Nouvelle ligne : {}", item.toString());
             liste_id.add(item.id());
