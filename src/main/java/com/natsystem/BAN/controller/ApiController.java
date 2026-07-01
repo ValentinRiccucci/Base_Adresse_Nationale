@@ -25,7 +25,7 @@ public class ApiController {
     @GetMapping("/page")
     public Page<FranceDTO> francePage(
             @ParameterObject
-            @PageableDefault(size = 20, page = 0) Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return apiService.recherche(
                 pageable
@@ -36,7 +36,7 @@ public class ApiController {
     public Page<FranceDTO> cp(
             @RequestParam("cp") Integer cp,
             @ParameterObject
-            @PageableDefault(size = 20, page = 0) Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return apiService.rechercheCp(
                 pageable,cp
@@ -47,7 +47,7 @@ public class ApiController {
     public Page<FranceDTO> rechercheVoie(
             @RequestParam("voie") String voie,
             @ParameterObject
-            @PageableDefault(size = 20, page = 0) Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return apiService.rechercheVoie(
                 pageable,voie
@@ -58,7 +58,7 @@ public class ApiController {
     public Page<FranceDTO> rechercheCommune(
             @RequestParam("commune") String commune,
             @ParameterObject
-            @PageableDefault(size = 20, page = 0) Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
         return apiService.rechercheCommune(
                 pageable,commune

@@ -1,9 +1,8 @@
 package com.natsystem.BAN.Listener;
 
-import com.natsystem.BAN.processor.FranceProcessor;
-import com.natsystem.BAN.repository.FranceRepository;
 import com.natsystem.BAN.services.ApiService;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.job.JobExecution;
@@ -18,22 +17,20 @@ import static com.natsystem.BAN.processor.FranceProcessor.listePasSuppression;
 @Configuration
 public class JobProgressListener {
     private static final Logger log = LoggerFactory.getLogger(JobProgressListener.class);
-    private final FranceRepository franceRepository;
     private final MeterRegistry meterRegistry;
     private final ApiService apiService;
 
 
-    public JobProgressListener(FranceRepository franceRepository, MeterRegistry meterRegistry, ApiService apiService) {
-        this.franceRepository = franceRepository;
+    public JobProgressListener( MeterRegistry meterRegistry, ApiService apiService) {
         this.meterRegistry = meterRegistry;
         this.apiService = apiService;
     }
 
     @Bean
-    public JobExecutionListener jobMetricsListener(MeterRegistry registry, FranceProcessor franceProcessor) {
+    public JobExecutionListener jobMetricsListener() {
         return new JobExecutionListener() {
 
-            public void beforeJob(JobExecution jobExecution) {
+            public void beforeJob(@NonNull JobExecution jobExecution) {
                 log.info("Démarrage du job [{}] avec les paramètres : {}",
                         jobExecution.getJobInstance().getJobName(),
                         jobExecution.getJobParameters());
@@ -41,11 +38,12 @@ public class JobProgressListener {
             }
 
             @Override
-            public void afterJob(JobExecution jobExecution) {
+            public void afterJob(@NonNull JobExecution jobExecution) {
 
                 int nbLigneSuppr = apiService.deleteAllByIdNotIn(listePasSuppression);
                 log.info("Nombre de lignes supprimées : {}", nbLigneSuppr);
 
+                assert jobExecution.getStartTime() != null;
                 log.info("Job [{}] terminé avec le statut : {} en {} ms",
                         jobExecution.getJobInstance().getJobName(),
                         jobExecution.getStatus(),

@@ -22,11 +22,8 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
     private static final Pattern pattern = Pattern.compile("^([0-9]){5}_[A-Za-z0-9]{1,9}_([0-9]){5}(?:_[A-Za-z0-9\\s_-]+)?$");
     private final MeterRegistry meterRegistry;
     private final FranceRepository franceRepository;
-    private static ArrayList<France> database = new ArrayList<>();
-    private static ArrayList<String> liste_id = new ArrayList<>();
+    private static final ArrayList<String> liste_id = new ArrayList<>();
     public static ArrayList<String> listePasSuppression = new ArrayList<>();
-    public static ArrayList<String> listeSuppression = new ArrayList<>();
-    private France france;
 
 
 
@@ -38,12 +35,11 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
     public FranceProcessor(MeterRegistry meterRegistry, FranceRepository franceRepository) {
         this.meterRegistry = meterRegistry;
         this.franceRepository = franceRepository;
-        database = (ArrayList<France>) franceRepository.findAll();
     }
 
     @Override
-    public France process(FranceDTO item) throws Exception {
-        Boolean pass = false;
+    public France process(FranceDTO item) {
+        boolean pass = false;
 
         meterRegistry.counter("ban.france.lignes").increment();
         meterRegistry.counter("ban.france.invalid_postal").count();
@@ -59,8 +55,8 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
         //On regarde si la ligne était déja dans la table mais qu'elle est différente et pas déja traité
         else if (databaseItem != null && !isDuplicate(item, Optional.of(databaseItem)) ) {
             meterRegistry.counter("ban.france.duplicates").increment();
-            log.info("Ancienne ligne : {}", databaseItem.toString());
-            log.info("Nouvelle ligne : {}", item.toString());
+            log.info("Ancienne ligne : {}", databaseItem);
+            log.info("Nouvelle ligne : {}", item);
             liste_id.add(item.id());
             //Élimination des ID qui n'ont pas le bon format
         } else if ( !pattern.matcher(item.id()).matches()) {
@@ -79,7 +75,7 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
 
         if (!pass) {
             listePasSuppression.add(item.id());
-            France france = new France(item.id(),
+            return new France(item.id(),
                     item.id_fantoir(),
                     item.numero(),
                     item.rep(),
@@ -102,7 +98,6 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
                     item.source_nom_voie(),
                     item.certification_commune(),
                     item.cad_parcelles());
-            return france;
         }
         else return null;
     }
@@ -110,8 +105,6 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
     private Boolean isDuplicate(FranceDTO france, Optional<France> france2) {
 
         Optional<France> france3 = Optional.of(new France(france.id(), france.id_fantoir(), france.numero(), france.rep(), france.nom_voie(), france.code_postal(), france.code_insee(), france.nom_commune(), france.code_insee_ancienne_commune(), france.nom_ancienne_commune(), france.x(), france.y(), france.lon(), france.lat(), france.type_position(), france.alias(), france.nom(), france.libelle_acheminement(), france.nom_afnor(), france.source_position(), france.source_nom_voie(), france.certification_commune(), france.cad_parcelles()));
-//        log.info("france2: {}", france2.toString());
-//        log.info("france3: {}", france3.toString());
         return france3.equals(france2);
 
 //
