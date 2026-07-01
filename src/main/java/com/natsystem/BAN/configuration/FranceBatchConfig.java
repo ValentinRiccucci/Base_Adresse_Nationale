@@ -10,9 +10,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
-import org.springframework.batch.core.step.StepExecution;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -20,13 +18,11 @@ import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.FlatFileParseException;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.transform.FieldSet;
-import org.springframework.batch.infrastructure.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
@@ -194,15 +190,13 @@ cad_parcelles =                  EXCLUDED.cad_parcelles
     @Bean
     public Step importFranceStep(
             JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
             FlatFileItemReader<FranceDTO> csvReader,
             FranceProcessor franceProcessor,
-            RepositoryItemWriter<France> franceWriter,
-            JdbcBatchItemWriter<France> franceJdbcWriter,
-            TaskExecutor taskExecutor
+            JdbcBatchItemWriter<France> franceJdbcWriter
+
     ) {
         return new StepBuilder("importFranceStep", jobRepository)
-                .<FranceDTO, France>chunk(4000, transactionManager)
+                .<FranceDTO, France>chunk(4000)
                 .reader(csvReader)
                 .processor(franceProcessor)
                 .writer(franceJdbcWriter)

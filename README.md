@@ -91,8 +91,7 @@ Le job Spring Batch (`importFranceJob`) suit le pattern classique **Reader → P
 src/main/java/com/natsystem/BAN/
 ├── BanApplication.java              # Point d'entrée ; lance le job au démarrage (CommandLineRunner)
 ├── configuration/
-│   ├── FranceBatchConfig.java       # Reader / Writer / Step / Job de l'import
-│   └── HelloWorldBatchConfig.java   # Exemple de job "Hello World" (démo Spring Batch)
+│   └── FranceBatchConfig.java       # Reader / Writer / Step / Job de l'import
 ├── controller/
 │   └── ApiController.java           # Endpoints REST /79/*
 ├── services/
