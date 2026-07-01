@@ -19,4 +19,20 @@ public class ApiService {
         return franceRepository.findAll(pageable)
                 .map(FranceDTO::from);
     }
+
+    @Transactional(readOnly = true)
+    public Page<FranceDTO> rechercheCp(Pageable pageable,Integer cp) {
+        return franceRepository.findByCode_postal(pageable,cp)
+                .map(FranceDTO::from);
+    }
+
+    public Page<FranceDTO> rechercheVoie(Pageable pageable, String voie) {
+        return franceRepository.findByNom_voieIgnoreCase(pageable,voie)
+                .map(FranceDTO::from);
+    }
+
+    public Page<FranceDTO> rechercheCommune(Pageable pageable, String commune) {
+        return franceRepository.findByNom_communeIgnoreCase(pageable,commune)
+                .map(FranceDTO::from);
+    }
 }

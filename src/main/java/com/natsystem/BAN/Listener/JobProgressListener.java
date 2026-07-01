@@ -47,19 +47,19 @@ public class JobProgressListener {
             @Override
             public void afterJob(JobExecution jobExecution) {
 
-//                Set<String> allDatabaseId = new HashSet<>(franceRepository.findAll().stream().map(France::getId).collect(Collectors.toSet()));
-//                log.info("AllDatabaseId size {}", allDatabaseId.size());
-//                log.info("listePasSuppression size {}", listePasSuppression.size());
-//
-//                List<String> aSupprimer = allDatabaseId.stream()
-//                        .filter(item -> !listePasSuppression.contains(item))
-//                        .toList();
-//
-//                log.info("Nombre de lignes à supprimer : {}", aSupprimer.size());
-//
-//                if (!aSupprimer.isEmpty()) {
-//                    franceRepository.deleteAllById(aSupprimer);
-//                }
+                Set<String> allDatabaseId = new HashSet<>(franceRepository.findAll().stream().map(France::getId).collect(Collectors.toSet()));
+                log.info("AllDatabaseId size {}", allDatabaseId.size());
+                log.info("listePasSuppression size {}", listePasSuppression.size());
+
+                List<String> aSupprimer = allDatabaseId.stream()
+                        .filter(item -> !listePasSuppression.contains(item))
+                        .toList();
+
+                log.info("Nombre de lignes à supprimer : {}", aSupprimer.size());
+
+                if (!aSupprimer.isEmpty()) {
+                    franceRepository.deleteAllById(aSupprimer);
+                }
 
 
                 log.info("Job [{}] terminé avec le statut : {} en {} ms",
