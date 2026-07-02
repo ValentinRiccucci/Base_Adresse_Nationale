@@ -1,5 +1,6 @@
 package com.natsystem.BAN.configuration;
 
+import com.natsystem.BAN.Listener.ChunkProgressListener;
 import com.natsystem.BAN.Listener.StepTimingListener;
 import com.natsystem.BAN.dto.FranceDTO;
 import com.natsystem.BAN.model.France;
@@ -10,6 +11,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
+import org.springframework.batch.core.step.builder.ChunkOrientedStepBuilder;
+import org.springframework.batch.core.step.builder.SimpleStepBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.data.RepositoryItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
@@ -192,20 +195,25 @@ cad_parcelles =                  EXCLUDED.cad_parcelles
             JobRepository jobRepository,
             FlatFileItemReader<FranceDTO> csvReader,
             FranceProcessor franceProcessor,
-            JdbcBatchItemWriter<France> franceJdbcWriter
+            JdbcBatchItemWriter<France> franceJdbcWriter,
+            ChunkProgressListener chunkProgressListener,
+            StepTimingListener stepTimingListener
 
     ) {
-        return new StepBuilder("importFranceStep", jobRepository)
-                .<FranceDTO, France>chunk(4000)
+         ChunkOrientedStepBuilder<FranceDTO, France> builder = new StepBuilder("importFranceStep", jobRepository)
+                .<FranceDTO, France>chunk(3000)
                 .reader(csvReader)
                 .processor(franceProcessor)
                 .writer(franceJdbcWriter)
-                .listener(new StepTimingListener())
+                //listener(new StepTimingListener())
+                .listener(chunkProgressListener)
                 .faultTolerant()
                 .skip(FlatFileParseException.class)
-                .skipLimit(1000)
+                .skipLimit(1000);
                 //.taskExecutor(taskExecutor) erreur SQLLITE base locked
-                .build();
+                //.build();
+        builder.listener(stepTimingListener);
+        return builder.build();
     }
 
     @Bean
