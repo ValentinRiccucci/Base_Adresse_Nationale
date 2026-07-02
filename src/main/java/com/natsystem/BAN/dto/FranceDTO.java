@@ -54,4 +54,15 @@ public record FranceDTO(
                 france.getCad_parcelles()
         );
     };
+
+    @Override
+    public String toString() {
+        return "FranceDTO{" +
+                "id='" + id + '\'' +
+                ", numero=" + numero +
+                ", nom_voie='" + nom_voie + '\'' +
+                ", code_postal=" + code_postal +
+                ", nom_commune='" + nom_commune + '\'' +
+                '}';
+    }
 }

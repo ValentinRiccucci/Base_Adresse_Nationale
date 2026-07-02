@@ -47,8 +47,8 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
         //On regarde si on pas déja traité avec l'ID
         if (liste_id.contains(item.id()) ) {
             meterRegistry.counter("ban.france.duplicates").increment();
-            log.warn("ID déjà existant en base id={}",
-                    item.id()
+            log.warn("ID déjà existant en base : {}",
+                    item
             );
             pass = true;
         }
@@ -64,6 +64,7 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
                     item.id(),
                     !pattern.matcher(item.id()).matches()
             );
+            meterRegistry.counter("ban.france.wrongidformat").increment();
             pass = true;
         }
 
@@ -74,6 +75,8 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
         }
 
         if (!pass) {
+            meterRegistry.counter("ban.france.lignesinsere").increment();
+            //log.info("Ligne inséré -> {}",meterRegistry.get("ban.france.lignesinsere").counter().count());
             listePasSuppression.add(item.id());
             return new France(item.id(),
                     item.id_fantoir(),

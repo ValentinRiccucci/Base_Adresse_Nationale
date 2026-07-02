@@ -63,5 +63,14 @@ public class France {
     @Column(name = "cad_parcelles")
     String cad_parcelles;
 
-
+    @Override
+    public String toString() {
+        return "France{" +
+                "id='" + id + '\'' +
+                ", code_postal=" + code_postal +
+                ", nom_commune='" + nom_commune + '\'' +
+                ", numero=" + numero + '\'' +
+                ", nom_voie='" + nom_voie +
+                '}';
+    }
 }
