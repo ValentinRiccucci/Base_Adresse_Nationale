@@ -1,5 +1,6 @@
 package com.natsystem.BAN.Listener;
 
+import com.natsystem.BAN.processor.FranceProcessor;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
@@ -29,6 +30,7 @@ public class ChunkProgressListener implements ChunkListener {
         meterRegistry.counter("ban.france.chunk").increment();
         timer = Timer.start(meterRegistry);
         log.info("Chunk {} BEFORE",meterRegistry.counter("ban.france.chunk").count());
+        FranceProcessor.clearListe();
     }
 
     @AfterChunk

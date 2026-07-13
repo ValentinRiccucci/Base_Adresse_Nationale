@@ -1,9 +1,11 @@
 package com.natsystem.BAN.processor;
 
+import ch.qos.logback.core.FileAppender;
 import com.natsystem.BAN.dto.FranceDTO;
 import com.natsystem.BAN.model.France;
 import com.natsystem.BAN.repository.FranceRepository;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.apache.logging.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -11,8 +13,10 @@ import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.logging.FileHandler;
 import java.util.regex.Pattern;
 
 @StepScope
@@ -35,6 +39,10 @@ public class FranceProcessor implements ItemProcessor<FranceDTO, France> {
     public FranceProcessor(MeterRegistry meterRegistry, FranceRepository franceRepository) {
         this.meterRegistry = meterRegistry;
         this.franceRepository = franceRepository;
+    }
+
+    public static void clearListe() {
+        liste_id.clear();
     }
 
     @Override

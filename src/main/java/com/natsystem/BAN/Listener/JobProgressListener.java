@@ -1,5 +1,6 @@
 package com.natsystem.BAN.Listener;
 
+import com.natsystem.BAN.repository.FranceRepository;
 import com.natsystem.BAN.services.ApiService;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.jspecify.annotations.NonNull;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
+import java.util.ArrayList;
 
 import static com.natsystem.BAN.processor.FranceProcessor.listePasSuppression;
 
@@ -19,9 +21,10 @@ public class JobProgressListener {
     private static final Logger log = LoggerFactory.getLogger(JobProgressListener.class);
     private final MeterRegistry meterRegistry;
     private final ApiService apiService;
+    public static ArrayList<String> listeDB = new ArrayList<>();
 
 
-    public JobProgressListener( MeterRegistry meterRegistry, ApiService apiService) {
+    public JobProgressListener(MeterRegistry meterRegistry, ApiService apiService, FranceRepository franceRepository) {
         this.meterRegistry = meterRegistry;
         this.apiService = apiService;
     }
@@ -34,13 +37,19 @@ public class JobProgressListener {
                 log.info("Démarrage du job [{}] avec les paramètres : {}",
                         jobExecution.getJobInstance().getJobName(),
                         jobExecution.getJobParameters());
+                listePasSuppression = apiService.findAllId();
                 //franceRepository.deleteAll();
             }
 
             @Override
             public void afterJob(@NonNull JobExecution jobExecution) {
 
-                int nbLigneSuppr = apiService.deleteAllByIdNotIn(listePasSuppression);
+                ArrayList<String> liste = new ArrayList<>();
+                listeDB.stream()
+                        .filter(listePasSuppression::contains)
+                        .forEach(liste::add);
+                
+                int nbLigneSuppr = apiService.deleteAllById(liste);
                 log.info("Nombre de lignes supprimées : {}", nbLigneSuppr);
 
                 assert jobExecution.getStartTime() != null;

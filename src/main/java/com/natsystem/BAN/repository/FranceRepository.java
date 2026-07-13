@@ -26,4 +26,11 @@ public interface FranceRepository extends JpaRepository<France, String> {
     @Modifying
     @Query(value="delete from france where id not in (:ids)",nativeQuery=true)
     int deleteAllByIdNotIn(ArrayList<String> ids);
+
+    @Modifying
+    @Query(value="delete from france where id in (:ids)",nativeQuery=true)
+    int deleteAllById(ArrayList<String> ids);
+
+    @Query(value="select id from france",nativeQuery=true)
+    ArrayList<String> findAllId();
 }

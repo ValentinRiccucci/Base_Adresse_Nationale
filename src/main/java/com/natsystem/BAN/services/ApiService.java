@@ -39,11 +39,20 @@ public class ApiService {
         return franceRepository.findByNom_communeIgnoreCase(pageable,commune)
                 .map(FranceDTO::from);
     }
-
     @Transactional(readOnly = true)
+    public ArrayList<String> findAllId() {
+        return franceRepository.findAllId();
+    }
+
+
+    @Transactional(readOnly = false)
+    public int deleteAllById(ArrayList<String> ids) {
+        return franceRepository.deleteAllById(ids);
+    }
+
+    @Transactional(readOnly = false)
     public int deleteAllByIdNotIn(ArrayList<String> ids) {
         return franceRepository.deleteAllByIdNotIn(ids);
     }
-
 
 }
